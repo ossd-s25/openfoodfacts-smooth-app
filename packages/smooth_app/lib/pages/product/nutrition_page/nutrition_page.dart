@@ -17,6 +17,7 @@ import 'package:smooth_app/helpers/product_cards_helper.dart';
 import 'package:smooth_app/helpers/ui_helpers.dart';
 import 'package:smooth_app/pages/input/unfocus_field_when_tap_outside.dart';
 import 'package:smooth_app/pages/product/common/product_buttons.dart';
+import 'package:smooth_app/pages/product/common/product_buttons_focus_swap.dart';
 import 'package:smooth_app/pages/product/edit_product_image_viewer.dart';
 import 'package:smooth_app/pages/product/may_exit_page_helper.dart';
 import 'package:smooth_app/pages/product/nutrition_page/widgets/nutrition_add_nutrient_button.dart';
@@ -152,14 +153,10 @@ class _NutritionPageLoadedState extends State<NutritionPageLoaded>
                   ),
                 ],
               ),
-              bottomNavigationBar: ProductBottomButtonsBar(
-                onSave: () async => _exitPage(
-                  await _mayExitPage(saving: true),
-                ),
-                onCancel: () async => _exitPage(
-                  await _mayExitPage(saving: false),
-                ),
-              ),
+              bottomNavigationBar: ProductBottomFocusSwapButtonsBar(
+                  onSave: () async => _exitPage(
+                        await _mayExitPage(saving: true),
+                      )),
             ),
           ),
         ),
