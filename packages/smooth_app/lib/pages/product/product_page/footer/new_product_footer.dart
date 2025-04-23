@@ -103,6 +103,7 @@ enum ProductFooterActionBar {
         compare,
         addToList,
         share,
+        report,
       ];
 }
 
