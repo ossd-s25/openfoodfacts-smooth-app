@@ -1540,6 +1540,7 @@
   "@edit_product_label": {
     "description": "Edit product button label"
   },
+  "report_product_label": "Report product",
   "edit_product_pending_operations_banner_title": "Uploading your edits…",
   "@edit_product_pending_operations_banner_title": {
     "description": "When a product has pending edits (being sent to the server), there is a message on the edit page (here is the title of the message)."
@@ -1556,6 +1557,7 @@
   "@edit_product_label_short": {
     "description": "Edit product button short label (only the verb)"
   },
+  "report_product_label_short": "Report",
   "edit_product_form_item_help": "How to enter \"{value}\"?",
   "@edit_product_form_item_help": {
     "description": "Help text for the input field. Eg 'How to enter stores?'",

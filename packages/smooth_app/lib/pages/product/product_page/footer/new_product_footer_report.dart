@@ -11,9 +11,9 @@ class ProductFooterReportButton extends StatelessWidget {
     final AppLocalizations appLocalizations = AppLocalizations.of(context);
 
     return ProductFooterButton(
-      label: appLocalizations.edit_product_label_short,
+      label: appLocalizations.report_product_label_short,
       semanticsLabel: appLocalizations.edit_product_label,
-      icon: const icons.Edit(),
+      icon: const icons.Flag(),
       onTap: () {
         // TODO(g123): Implement Nutripatrol
       },
