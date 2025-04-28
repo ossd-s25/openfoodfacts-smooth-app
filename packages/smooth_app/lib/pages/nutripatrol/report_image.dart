@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
@@ -10,6 +11,7 @@ enum ReportReason { photoNotMatching, inappropriatePhoto, other }
 
 class ReportImageState extends State<ReportImage> {
   ReportReason? reportReason;
+  String reportExplanation = "";
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +67,24 @@ class ReportImageState extends State<ReportImage> {
                     children: [const Text("A"), const Text("B")],
                   ),
                 ),
-              SmoothCardWithRoundedHeader(
-                title: "Comment",
-                leading: Text(
-                    reportReason == ReportReason.photoNotMatching ? "3" : "2"),
-                child: const Row(
-                  children: [Text("A"), Text("B")],
+              if (reportReason != null)
+                SmoothCardWithRoundedHeader(
+                  title: "Comment",
+                  leading: Text(
+                      reportReason == ReportReason.photoNotMatching ? "3" : "2"),
+                  child: Row(
+                    children: [
+                      // TextFormField(
+                      //   onSaved: (String? newValue) => {
+                      //     setState(() {
+                      //       reportExplanation = newValue ?? reportExplanation;
+                      //     })
+                      //   },
+                      // ),
+                      Text(reportExplanation)
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ));
