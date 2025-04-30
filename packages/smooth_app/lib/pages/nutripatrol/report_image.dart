@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
+import 'package:smooth_app/database/transient_file.dart';
 import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
-import 'package:smooth_app/widgets/smooth_app_bar.dart';
-import 'package:smooth_app/widgets/smooth_list_diff.dart';
-import 'package:smooth_app/widgets/smooth_scaffold.dart';
 import 'package:smooth_app/resources/app_icons.dart' as icons;
+import 'package:smooth_app/widgets/smooth_app_bar.dart';
+import 'package:smooth_app/widgets/smooth_scaffold.dart';
 
 enum ReportReason { photoNotMatching, inappropriatePhoto, other }
 
@@ -15,6 +17,12 @@ class ReportImageState extends State<ReportImage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final TransientFile transientFile = _getTransientFile(
+      widget.product,
+      widget.imageField,
+    );
+
     return SmoothScaffold(
         appBar: SmoothAppBar(
           title: Text("Report an Image"),
@@ -23,12 +31,44 @@ class ReportImageState extends State<ReportImage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const SmoothCardWithRoundedHeader(
+              SmoothCardWithRoundedHeader(
                 title: "Image to report",
-                leading: icons.Flag(),
-                child: Row(
-                  children: [Text("A"), Text("B")],
+                leading: const icons.Flag(),
+                child: Padding(padding: const EdgeInsets.all(12.0), child: Row(spacing: 12.0,
+                  children: [
+                    ProductPicture.fromTransientFile(
+                      product: widget.product,
+                      imageField: widget.imageField,
+                      language: widget.language,
+                      allowAlternativeLanguage: false,
+                      transientFile: transientFile,
+                      size: const Size(50, 50),
+                      onTap: null,
+                      errorTextStyle: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      heroTag: ProductPicture.generateHeroTag(
+                        widget.product.barcode!,
+                        widget.imageField,
+                      ),
+                      showObsoleteIcon: false,
+                      showOwnerIcon: true,
+                    ),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Image to Report',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('Contributor: xxxxx'),
+                        Text('Date uploaded: 01/01/2000'),
+                      ],
+                    ),
+                  ],
                 ),
+                )
               ),
               SmoothCardWithRoundedHeader(
                 title: "Reason",
@@ -70,8 +110,9 @@ class ReportImageState extends State<ReportImage> {
               if (reportReason != null)
                 SmoothCardWithRoundedHeader(
                   title: "Comment",
-                  leading: Text(
-                      reportReason == ReportReason.photoNotMatching ? "3" : "2"),
+                  leading: Text(reportReason == ReportReason.photoNotMatching
+                      ? "3"
+                      : "2"),
                   child: Row(
                     children: [
                       // TextFormField(
@@ -89,10 +130,26 @@ class ReportImageState extends State<ReportImage> {
           ),
         ));
   }
+
+  TransientFile _getTransientFile(
+    final Product product,
+    final ImageField imageField,
+  ) =>
+  TransientFile.fromProduct(
+    product,
+    imageField,
+    widget.language,
+  );
 }
 
 class ReportImage extends StatefulWidget {
-  const ReportImage({super.key});
+  const ReportImage(
+      {
+        required this.language, required this.imageField, required this.product, super.key});
+
+  final OpenFoodFactsLanguage language;
+  final ImageField imageField;
+  final Product product;
 
   @override
   State<StatefulWidget> createState() {
