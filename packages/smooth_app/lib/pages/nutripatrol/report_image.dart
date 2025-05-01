@@ -9,11 +9,13 @@ import 'package:smooth_app/resources/app_icons.dart' as icons;
 import 'package:smooth_app/widgets/smooth_app_bar.dart';
 import 'package:smooth_app/widgets/smooth_scaffold.dart';
 
-enum ReportReason { photoNotMatching, inappropriatePhoto, other }
+enum ReportReason { 
+  photoNotMatching, photoNotMatchingAndContinuingWithReport, inappropriatePhoto, other 
+}
 
 class ReportImageState extends State<ReportImage> {
   ReportReason? reportReason;
-  String reportExplanation = "";
+  String reportExplanation = '';
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +27,14 @@ class ReportImageState extends State<ReportImage> {
 
     return SmoothScaffold(
         appBar: SmoothAppBar(
-          title: Text("Report an Image"),
+          title: const Text('Report an Image'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               SmoothCardWithRoundedHeader(
-                title: "Image to report",
+                title: 'Image to report',
                 leading: const icons.Flag(),
                 child: Padding(padding: const EdgeInsets.all(12.0), child: Row(spacing: 12.0,
                   children: [
@@ -71,26 +73,26 @@ class ReportImageState extends State<ReportImage> {
                 )
               ),
               SmoothCardWithRoundedHeader(
-                title: "Reason",
-                leading: const Text("1"),
+                title: 'Reason',
+                leading: const Text('1'),
                 child: Column(
                   children: [
                     SmoothButtonWithArrow(
-                        text: "Photo does not match product",
+                        text: 'Photo does not match product',
                         onTap: () => {
                               setState(() {
                                 reportReason = ReportReason.photoNotMatching;
                               })
                             }),
                     SmoothButtonWithArrow(
-                        text: "Photo is inappropriate",
+                        text: 'Photo is inappropriate',
                         onTap: () => {
                               setState(() {
                                 reportReason = ReportReason.inappropriatePhoto;
                               })
                             }),
                     SmoothButtonWithArrow(
-                        text: "Other reason",
+                        text: 'Other reason',
                         onTap: () => {
                               setState(() {
                                 reportReason = ReportReason.other;
@@ -99,20 +101,33 @@ class ReportImageState extends State<ReportImage> {
                   ],
                 ),
               ),
-              if (reportReason == ReportReason.photoNotMatching)
-                const SmoothCardWithRoundedHeader(
-                  title: "Explanation",
-                  leading: Text("2"),
-                  child: Row(
-                    children: [const Text("A"), const Text("B")],
+              if (reportReason == ReportReason.photoNotMatching || reportReason == ReportReason.photoNotMatchingAndContinuingWithReport)
+                SmoothCardWithRoundedHeader(
+                  title: 'Explanation',
+                  leading: const Text('2'),
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                          'Open Food Facts is a user maintained database with over 3 million products (according to Wikipedia).'),
+                      const Text(
+                          'If you own this product, you can take a photo of it to correct the product details.'),
+                      SmoothButtonWithArrow(
+                          text: 'I would like to take a picture of the product',
+                          onTap: () => {print('To be implemented...')}),
+                      SmoothButtonWithArrow(text: 'I would like to continue making a report', onTap: () => {
+                        setState(() {
+                          reportReason = ReportReason.photoNotMatchingAndContinuingWithReport;
+                        })
+                      })
+                    ],
                   ),
                 ),
-              if (reportReason != null)
+              if (reportReason != null && reportReason != ReportReason.photoNotMatching)
                 SmoothCardWithRoundedHeader(
-                  title: "Comment",
+                  title: 'Comment',
                   leading: Text(reportReason == ReportReason.photoNotMatching
-                      ? "3"
-                      : "2"),
+                      ? '3'
+                      : '2'),
                   child: Row(
                     children: [
                       // TextFormField(
