@@ -12,6 +12,7 @@ import 'package:smooth_app/pages/preferences/user_preferences_dev_mode.dart';
 import 'package:smooth_app/resources/app_icons.dart' as icons;
 import 'package:smooth_app/widgets/smooth_app_bar.dart';
 import 'package:smooth_app/widgets/smooth_scaffold.dart';
+import 'package:smooth_app/widgets/v2/smooth_buttons_bar.dart';
 
 enum ReportReason {
   photoNotMatching,
@@ -23,7 +24,6 @@ enum ReportReason {
 class ReportImageState extends State<ReportImage> {
   ReportReason? reportReason;
   String reportExplanation = '';
-  final textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,9 @@ class ReportImageState extends State<ReportImage> {
               ),
             ),
           ),
-          SizedBox(height: 12,),
+          SizedBox(
+            height: 12,
+          ),
           SmoothCardWithRoundedHeader(
             title: 'Reason',
             leading: const Text('1'),
@@ -112,7 +114,9 @@ class ReportImageState extends State<ReportImage> {
               ],
             ),
           ),
-          SizedBox(height: 12,),
+          SizedBox(
+            height: 12,
+          ),
           if (reportReason == ReportReason.photoNotMatching ||
               reportReason ==
                   ReportReason.photoNotMatchingAndContinuingWithReport)
@@ -128,10 +132,10 @@ class ReportImageState extends State<ReportImage> {
                     const Text(
                         'If you own this product, you can take a photo of it to correct the product details.'),
                     SmoothButtonWithArrow(
-                        text: 'I would like to take a picture of the product',
+                        text: 'Take a picture of the product',
                         onTap: () => {print('To be implemented...')}),
                     SmoothButtonWithArrow(
-                        text: 'I would like to continue making a report',
+                        text: 'Continue making a report',
                         onTap: () => {
                               setState(() {
                                 reportReason = ReportReason
@@ -142,7 +146,9 @@ class ReportImageState extends State<ReportImage> {
                 ),
               ),
             ),
-            SizedBox(height: 12,),
+          SizedBox(
+            height: 12,
+          ),
           if (reportReason != null &&
               reportReason != ReportReason.photoNotMatching)
             SmoothCardWithRoundedHeader(
@@ -191,6 +197,20 @@ class ReportImageState extends State<ReportImage> {
               ),
             ),
         ],
+      ),
+      bottomNavigationBar: SmoothButtonsBar2(
+        negativeButton: SmoothActionButton2(
+          text: "Cancel",
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        positiveButton: SmoothActionButton2(
+          text: "Submit",
+          onPressed: () {
+            print("Submitted");
+          },
+        ),
       ),
     );
   }
