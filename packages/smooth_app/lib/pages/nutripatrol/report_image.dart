@@ -204,13 +204,6 @@ class ReportImageState extends State<ReportImage> {
                 maxLines: null,
                 textInputAction: TextInputAction.newline,
                 textCapitalization: TextCapitalization.sentences,
-                // spellCheckConfiguration: (prefs.getFlag(
-                //                 UserPreferencesDevMode
-                //                     .userPreferencesFlagSpellCheckerOnOcr) ??
-                //             false) &&
-                //         (Platform.isAndroid || Platform.isIOS)
-                //     ? const SpellCheckConfiguration()
-                //     : const SpellCheckConfiguration.disabled(),
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: LARGE_SPACE,
