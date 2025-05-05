@@ -17,6 +17,20 @@ enum ReportReason {
   other
 }
 
+extension ReportReasonUserText on ReportReason {
+  String get userText {
+    switch (this) {
+      case ReportReason.photoNotMatching ||
+            ReportReason.photoNotMatchingAndContinuingWithReport:
+        return 'Photo does not match product';
+      case ReportReason.inappropriatePhoto:
+        return 'Photo is inappropriate';
+      case ReportReason.other:
+        return 'Other reason';
+    }
+  }
+}
+
 class ReportImageState extends State<ReportImage> {
   ReportReason? reportReason;
   String reportExplanation = '';
@@ -33,7 +47,7 @@ class ReportImageState extends State<ReportImage> {
         title: const Text('Report an Image'),
       ),
       body: ListView(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         children: [
           SmoothCardWithRoundedHeader(
             title: 'Image to report',
@@ -62,55 +76,66 @@ class ReportImageState extends State<ReportImage> {
                     showObsoleteIcon: false,
                     showOwnerIcon: true,
                   ),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Image to Report',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      const Text('Contributor: xxxxx'),
-                      const Text('Date uploaded: 01/01/2000'),
-                      Text(reportExplanation),
+                      Text('Contributor: xxxxx'),
+                      Text('Date uploaded: 01/01/2000'),
                     ],
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           SmoothCardWithRoundedHeader(
             title: 'Reason',
             leading: const Text('1'),
-            child: Column(
-              children: [
-                SmoothButtonWithArrow(
-                    text: 'Photo does not match product',
-                    onTap: () => {
-                          setState(() {
-                            reportReason = ReportReason.photoNotMatching;
-                          })
-                        }),
-                SmoothButtonWithArrow(
-                    text: 'Photo is inappropriate',
-                    onTap: () => {
-                          setState(() {
-                            reportReason = ReportReason.inappropriatePhoto;
-                          })
-                        }),
-                SmoothButtonWithArrow(
-                    text: 'Other reason',
-                    onTap: () => {
-                          setState(() {
-                            reportReason = ReportReason.other;
-                          })
-                        }),
-              ],
+            trailing: SmoothCardHeaderButton(
+                tooltip: 'Expand',
+                child: const icons.Edit(),
+                onTap: () {
+                  setState(() {
+                    reportReason = null;
+                  });
+                }),
+            child: Builder(
+              builder: (BuildContext context) {
+                if (reportReason == null) {
+                  return Column(
+                    children: [
+                      for (final ReportReason reason in ReportReason.values)
+                        if (reason !=
+                            ReportReason
+                                .photoNotMatchingAndContinuingWithReport)
+                          SmoothButtonWithArrow(
+                              text: reason.userText,
+                              onTap: () => {
+                                    setState(() {
+                                      reportReason = reason;
+                                    })
+                                  }),
+                    ],
+                  );
+                } else {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      child: Text(reportReason!.userText),
+                    ),
+                  );
+                }
+              },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           if (reportReason == ReportReason.photoNotMatching ||
@@ -119,35 +144,55 @@ class ReportImageState extends State<ReportImage> {
             SmoothCardWithRoundedHeader(
               title: 'Explanation',
               leading: const Text('2'),
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Column(
-                  children: <Widget>[
-                    const Text(
-                        'Open Food Facts is a user maintained database with over 3 million products (according to Wikipedia).'),
-                    const Text(
-                        'If you own this product, you can take a photo of it to correct the product details.'),
-                    SmoothButtonWithArrow(
-                        text: 'Take a picture of the product',
-                        onTap: () => {print('To be implemented...')}),
-                    SmoothButtonWithArrow(
-                        text: 'Continue making a report',
-                        onTap: () => {
-                              setState(() {
-                                reportReason = ReportReason
-                                    .photoNotMatchingAndContinuingWithReport;
-                              })
+              contentPadding: const EdgeInsets.all(12),
+              trailing: SmoothCardHeaderButton(
+                  tooltip: 'Expand',
+                  child: const icons.Edit(),
+                  onTap: () {
+                    setState(() {
+                      reportReason = ReportReason.photoNotMatching;
+                    });
+                  }),
+              child: Builder(
+                builder: (BuildContext context) {
+                  if (reportReason ==
+                      ReportReason.photoNotMatchingAndContinuingWithReport) {
+                        return const SizedBox(
+                          width: double.infinity,
+                          child: Text('Continue making a report'),
+                        );
+                  } else {
+                    return Column(
+                      children: <Widget>[
+                        const Text(
+                            'Open Food Facts is a user maintained database with over 3 million products (according to Wikipedia).'),
+                        const Text(
+                            'If you own this product, you can take a photo of it to correct the product details.'),
+                        SmoothButtonWithArrow(
+                            text: 'Take a picture of the product',
+                            onTap: () => {print('To be implemented...')}),
+                        SmoothButtonWithArrow(
+                          text: 'Continue making a report',
+                          onTap: () => {
+                            setState(() {
+                              reportReason = ReportReason
+                                  .photoNotMatchingAndContinuingWithReport;
                             })
-                  ],
-                ),
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                },
               ),
             ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           if (reportReason != null &&
               reportReason != ReportReason.photoNotMatching)
             SmoothCardWithRoundedHeader(
+              contentPadding: EdgeInsets.zero,
               title: 'Comment',
               leading: Text(reportReason ==
                       ReportReason.photoNotMatchingAndContinuingWithReport
@@ -196,15 +241,15 @@ class ReportImageState extends State<ReportImage> {
       ),
       bottomNavigationBar: SmoothButtonsBar2(
         negativeButton: SmoothActionButton2(
-          text: "Cancel",
+          text: 'Cancel',
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         positiveButton: SmoothActionButton2(
-          text: "Submit",
+          text: 'Submit',
           onPressed: () {
-            print("Submitted");
+            print('Submitted');
           },
         ),
       ),
