@@ -9,7 +9,6 @@ import 'package:smooth_app/generic_lib/bottom_sheets/smooth_bottom_sheet.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_back_button.dart';
 import 'package:smooth_app/helpers/image_field_extension.dart';
-import 'package:smooth_app/pages/nutripatrol/report_image.dart';
 import 'package:smooth_app/pages/nutripatrol/report_page_loader.dart';
 import 'package:smooth_app/pages/product/nutrition_page/nutrition_page_loader.dart';
 import 'package:smooth_app/pages/product/owner_field_info.dart';
