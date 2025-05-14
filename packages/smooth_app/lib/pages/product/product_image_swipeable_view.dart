@@ -9,6 +9,8 @@ import 'package:smooth_app/generic_lib/bottom_sheets/smooth_bottom_sheet.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_back_button.dart';
 import 'package:smooth_app/helpers/image_field_extension.dart';
+import 'package:smooth_app/pages/nutripatrol/report_image.dart';
+import 'package:smooth_app/pages/nutripatrol/report_page_loader.dart';
 import 'package:smooth_app/pages/product/nutrition_page/nutrition_page_loader.dart';
 import 'package:smooth_app/pages/product/owner_field_info.dart';
 import 'package:smooth_app/pages/product/product_field_editor.dart';
@@ -143,6 +145,8 @@ class _ProductImageSwipeableViewState extends State<ProductImageSwipeableView>
         itemBuilder: (BuildContext context) => <SmoothPopupMenuItem<String>>[
               _getPopupMenuEditItem(
                   context, imageField, AppLocalizations.of(context)),
+              const SmoothPopupMenuItem<String>(
+                  value: 'report', label: 'Report Image', icon: Icons.flag),
             ]);
   }
 
@@ -180,28 +184,38 @@ class _ProductImageSwipeableViewState extends State<ProductImageSwipeableView>
   }
 
   void _handlePopupMenuItemSelected(ImageField imageField, String value) {
-    if (value == 'edit') {
-      switch (imageField) {
-        case ImageField.INGREDIENTS:
-          ProductFieldOcrIngredientEditor()
-              .edit(context: context, product: upToDateProduct);
-          break;
-        case ImageField.NUTRITION:
-          NutritionPageLoader.showNutritionPage(
+    switch (value) {
+      case 'edit':
+        switch (imageField) {
+          case ImageField.INGREDIENTS:
+            ProductFieldOcrIngredientEditor()
+                .edit(context: context, product: upToDateProduct);
+            break;
+          case ImageField.NUTRITION:
+            NutritionPageLoader.showNutritionPage(
+              product: upToDateProduct,
+              isLoggedInMandatory: true,
+              context: context,
+            );
+            break;
+          case ImageField.PACKAGING:
+            ProductFieldPackagingEditor().edit(
+              product: upToDateProduct,
+              context: context,
+            );
+            break;
+          default:
+            break;
+        }
+      case 'report':
+        ReportPageLoader.showReportPage(
             product: upToDateProduct,
             isLoggedInMandatory: true,
             context: context,
-          );
-          break;
-        case ImageField.PACKAGING:
-          ProductFieldPackagingEditor().edit(
-            product: upToDateProduct,
-            context: context,
-          );
-          break;
-        default:
-          break;
-      }
+            imageField: imageField);
+        break;
+      default:
+        break;
     }
   }
 
