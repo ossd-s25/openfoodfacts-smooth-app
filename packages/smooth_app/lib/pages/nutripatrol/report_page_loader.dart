@@ -24,7 +24,6 @@ class ReportPageLoader {
         context,
         MaterialPageRoute<void>(
           builder: (BuildContext context) => ReportImage(
-              language: OpenFoodFactsLanguage.ENGLISH,
               imageField: imageField,
               product: product),
         ),

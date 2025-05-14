@@ -1,7 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
-import 'package:smooth_app/database/transient_file.dart';
 import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
@@ -37,10 +38,17 @@ class ReportImageState extends State<ReportImage> {
 
   @override
   Widget build(BuildContext context) {
-    final TransientFile transientFile = _getTransientFile(
-      widget.product,
-      widget.imageField,
-    );
+    ProductImage? productImage = widget.product.images
+        ?.firstWhere((image) => image.field == widget.imageField);
+
+    if (productImage?.contributor == null) {
+      ProductImage? replacement = widget.product.images?.firstWhereOrNull(
+          (image) =>
+              image.imgid == productImage?.imgid && image.contributor != null);
+      if (replacement != null) {
+        productImage = replacement;
+      }
+    }
 
     return SmoothScaffold(
       appBar: SmoothAppBar(
@@ -57,34 +65,23 @@ class ReportImageState extends State<ReportImage> {
               child: Row(
                 spacing: 12.0,
                 children: [
-                  ProductPicture.fromTransientFile(
-                    product: widget.product,
+                  ProductPicture.fromProduct(
                     imageField: widget.imageField,
-                    language: widget.language,
-                    allowAlternativeLanguage: false,
-                    transientFile: transientFile,
+                    product: widget.product,
                     size: const Size(50, 50),
-                    onTap: null,
-                    errorTextStyle: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    heroTag: ProductPicture.generateHeroTag(
-                      widget.product.barcode!,
-                      widget.imageField,
-                    ),
-                    showObsoleteIcon: false,
-                    showOwnerIcon: true,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Image to Report',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text('Contributor: xxxxx'),
-                      Text('Date uploaded: 01/01/2000'),
+                      if (productImage != null)
+                        Text(
+                            'Contributor: ${productImage.contributor ?? 'unknown'}'),
+                      Text(
+                          'Date uploaded: ${productImage?.uploaded != null ? DateFormat('yyyy-MM-dd').format(productImage!.uploaded!) : 'unknown'}'),
                     ],
                   ),
                 ],
@@ -157,10 +154,10 @@ class ReportImageState extends State<ReportImage> {
                 builder: (BuildContext context) {
                   if (reportReason ==
                       ReportReason.photoNotMatchingAndContinuingWithReport) {
-                        return const SizedBox(
-                          width: double.infinity,
-                          child: Text('Continue making a report'),
-                        );
+                    return const SizedBox(
+                      width: double.infinity,
+                      child: Text('Continue making a report'),
+                    );
                   } else {
                     return Column(
                       children: <Widget>[
@@ -248,26 +245,12 @@ class ReportImageState extends State<ReportImage> {
       ),
     );
   }
-
-  TransientFile _getTransientFile(
-    final Product product,
-    final ImageField imageField,
-  ) =>
-      TransientFile.fromProduct(
-        product,
-        imageField,
-        widget.language,
-      );
 }
 
 class ReportImage extends StatefulWidget {
   const ReportImage(
-      {required this.language,
-      required this.imageField,
-      required this.product,
-      super.key});
+      {required this.imageField, required this.product, super.key});
 
-  final OpenFoodFactsLanguage language;
   final ImageField imageField;
   final Product product;
 
