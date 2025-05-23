@@ -6,6 +6,7 @@ import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
 import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
+import 'package:smooth_app/query/product_query.dart';
 import 'package:smooth_app/resources/app_icons.dart' as icons;
 import 'package:smooth_app/widgets/smooth_app_bar.dart';
 import 'package:smooth_app/widgets/smooth_scaffold.dart';
@@ -268,7 +269,36 @@ class ReportImageState extends State<ReportImage> {
         positiveButton: SmoothActionButton2(
           text: 'Submit',
           onPressed: () {
-            print('Submitted');
+            const UriHelper nutriPatrolAPISubmitUriHelper =
+                UriHelper(host: 'nutripatrol.openfoodfacts.net');
+
+            final Uri nutriPatrolAPISubmitURI =
+                nutriPatrolAPISubmitUriHelper.getPostUri(path: 'api/v1/flags');
+
+            final User currentUser = ProductQuery.getWriteUser();
+
+            if (reportReason == null ||
+                productImage?.url == null ||
+                productImage?.imgid == null) {
+              return;
+            }
+
+            HttpHelper().doPostRequest(
+                nutriPatrolAPISubmitURI,
+                {
+                  'type': 'image',
+                  'url': productImage!.url!,
+                  'user_id': currentUser.userId,
+                  'source': 'mobile',
+                  'image_id': productImage.imgid!,
+                  'reason': reportReason!.name,
+                  'comment': reportExplanation,
+                },
+                currentUser,
+                uriHelper: nutriPatrolAPISubmitUriHelper,
+                addCredentialsToBody: false);
+
+            Navigator.pop(context);
           },
         ),
       ),
