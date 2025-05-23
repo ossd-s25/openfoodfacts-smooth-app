@@ -71,7 +71,7 @@ class ReportImageState extends State<ReportImage> {
         ?.firstWhere((image) => image.field == widget.imageField);
 
     if (productImage?.contributor == null) {
-      ProductImage? replacement = widget.product.images?.firstWhereOrNull(
+      final ProductImage? replacement = widget.product.images?.firstWhereOrNull(
           (image) =>
               image.imgid == productImage?.imgid && image.contributor != null);
       if (replacement != null) {
