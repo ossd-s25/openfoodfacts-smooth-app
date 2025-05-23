@@ -11,10 +11,14 @@ import 'package:smooth_app/widgets/smooth_app_bar.dart';
 import 'package:smooth_app/widgets/smooth_scaffold.dart';
 import 'package:smooth_app/widgets/v2/smooth_buttons_bar.dart';
 
+// We have to have our own enums here, since Nutripatrol doesn't have externally obtainable reasons for reporting
 enum ReportReason {
   photoNotMatching,
   photoNotMatchingAndContinuingWithReport,
-  inappropriatePhoto,
+  inappropriate,
+  outdated,
+  includes_personal_infos,
+  duplicate,
   other
 }
 
@@ -24,10 +28,35 @@ extension ReportReasonUserText on ReportReason {
       case ReportReason.photoNotMatching ||
             ReportReason.photoNotMatchingAndContinuingWithReport:
         return 'Photo does not match product';
-      case ReportReason.inappropriatePhoto:
+      case ReportReason.inappropriate:
         return 'Photo is inappropriate';
       case ReportReason.other:
         return 'Other reason';
+      case ReportReason.outdated:
+        return 'Outdated';
+      case ReportReason.includes_personal_infos:
+        return 'Includes personal information';
+      case ReportReason.duplicate:
+        return 'Duplicate';
+    }
+  }
+}
+
+extension ToString on ReportReason {
+  String get name {
+    switch (this) {
+      case ReportReason.photoNotMatching ||
+            ReportReason.photoNotMatchingAndContinuingWithReport ||
+            ReportReason.other:
+        return 'other';
+      case ReportReason.inappropriate:
+        return 'inappropriate';
+      case ReportReason.outdated:
+        return 'outdated';
+      case ReportReason.includes_personal_infos:
+        return 'includes_personal_infos';
+      case ReportReason.duplicate:
+        return 'duplicate';
     }
   }
 }
