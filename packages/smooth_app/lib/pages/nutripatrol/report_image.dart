@@ -71,18 +71,6 @@ class ReportImageState extends State<ReportImage> {
 
   @override
   Widget build(BuildContext context) {
-    ProductImage? productImage = widget.product.images
-        ?.firstWhere((image) => image.field == widget.imageField);
-
-    if (productImage?.contributor == null) {
-      final ProductImage? replacement = widget.product.images?.firstWhereOrNull(
-          (image) =>
-              image.imgid == productImage?.imgid && image.contributor != null);
-      if (replacement != null) {
-        productImage = replacement;
-      }
-    }
-
     return SmoothScaffold(
       appBar: SmoothAppBar(
         title: const Text('Report an Image'),
@@ -110,11 +98,11 @@ class ReportImageState extends State<ReportImage> {
                         'Image to Report',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      if (productImage != null)
+                      if (widget.productImage != null)
                         Text(
-                            'Contributor: ${productImage.contributor ?? 'unknown'}'),
+                            'Contributor: ${widget.productImage?.contributor ?? 'unknown'}'),
                       Text(
-                          'Date uploaded: ${productImage?.uploaded != null ? DateFormat('yyyy-MM-dd').format(productImage!.uploaded!) : 'unknown'}'),
+                          'Date uploaded: ${widget.productImage?.uploaded != null ? DateFormat('yyyy-MM-dd').format(widget.productImage!.uploaded!) : 'unknown'}'),
                     ],
                   ),
                 ],
@@ -271,61 +259,64 @@ class ReportImageState extends State<ReportImage> {
         ),
         positiveButton: SmoothActionButton2(
           text: 'Submit',
-          onPressed: () async {
-            final Uri nutriPatrolAPISubmitURI = Uri.https('nutripatrol.openfoodfacts.org', 'api/v1/flags');
-
-            final User currentUser = ProductQuery.getWriteUser();
-
-            if (reportReason == null ||
-                productImage?.url == null ||
-                productImage?.imgid == null ||
-                currentUser.cookie == null ||
-                widget.product.barcode == null) {
-              return;
-            }
-
-            final jsonData = {
-              'type': 'image',
-              'url': productImage!.url!,
-              'user_id': currentUser.userId,
-              'source': 'mobile',
-              'image_id': productImage.imgid!,
-              'reason': reportReason!.name,
-              'comment': reportExplanation,
-              'flavor': 'off',
-              'barcode': widget.product.barcode,
-            };
-
-            try {
-              final response = await http.post(nutriPatrolAPISubmitURI,
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': currentUser.cookie!
-                  },
-                  body: json.encode(jsonData));
-
-              if (context.mounted) {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                  Navigator.pop(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'Server error: ${response.statusCode}: ${response.body}')),
-                  );
-                }
-              }
-            } catch (e) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e')),
-                );
-              }
-            }
-          },
+          onPressed: submitAction,
         ),
       ),
     );
+  }
+
+  Future<void> submitAction() async {
+    final Uri nutriPatrolAPISubmitURI =
+        Uri.https('nutripatrol.openfoodfacts.org', 'api/v1/flags');
+    
+    final User currentUser = ProductQuery.getWriteUser();
+    
+    if (reportReason == null ||
+        widget.productImage?.url == null ||
+        widget.productImage?.imgid == null ||
+        currentUser.cookie == null ||
+        widget.product.barcode == null) {
+      return;
+    }
+    
+    final jsonData = {
+      'type': 'image',
+      'url': widget.productImage?.url,
+      'user_id': currentUser.userId,
+      'source': 'mobile',
+      'image_id': widget.productImage?.imgid,
+      'reason': reportReason!.name,
+      'comment': reportExplanation,
+      'flavor': 'off',
+      'barcode': widget.product.barcode,
+    };
+    
+    try {
+      final response = await http.post(nutriPatrolAPISubmitURI,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie': currentUser.cookie!
+          },
+          body: json.encode(jsonData));
+    
+      if (context.mounted) {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Server error: ${response.statusCode}: ${response.body}')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
   }
 }
 
@@ -335,6 +326,22 @@ class ReportImage extends StatefulWidget {
 
   final ImageField imageField;
   final Product product;
+
+  ProductImage? get productImage {
+    ProductImage? candidate = product.images
+        ?.firstWhere((image) => image.field == imageField);
+
+    if (candidate?.contributor == null) {
+      final ProductImage? replacement = product.images?.firstWhereOrNull(
+          (image) =>
+              image.imgid == candidate?.imgid && image.contributor != null);
+      if (replacement != null) {
+        candidate = replacement;
+      }
+    }
+
+    return candidate;
+  }
 
   @override
   State<StatefulWidget> createState() {
