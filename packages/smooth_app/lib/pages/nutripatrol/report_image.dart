@@ -292,6 +292,7 @@ class ReportImageState extends State<ReportImage> {
     };
 
     try {
+      // TODO(andylin2004): we should probably have a seperate nutripatrol library to abstract things like this out
       final response = await http.post(nutriPatrolAPISubmitURI,
           headers: {
             'Content-Type': 'application/json',
