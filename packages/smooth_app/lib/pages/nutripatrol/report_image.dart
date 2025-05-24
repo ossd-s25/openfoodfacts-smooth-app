@@ -268,9 +268,9 @@ class ReportImageState extends State<ReportImage> {
   Future<void> submitAction() async {
     final Uri nutriPatrolAPISubmitURI =
         Uri.https('nutripatrol.openfoodfacts.org', 'api/v1/flags');
-    
+
     final User currentUser = ProductQuery.getWriteUser();
-    
+
     if (reportReason == null ||
         widget.productImage?.url == null ||
         widget.productImage?.imgid == null ||
@@ -278,7 +278,7 @@ class ReportImageState extends State<ReportImage> {
         widget.product.barcode == null) {
       return;
     }
-    
+
     final jsonData = {
       'type': 'image',
       'url': widget.productImage?.url,
@@ -290,7 +290,7 @@ class ReportImageState extends State<ReportImage> {
       'flavor': 'off',
       'barcode': widget.product.barcode,
     };
-    
+
     try {
       final response = await http.post(nutriPatrolAPISubmitURI,
           headers: {
@@ -298,7 +298,7 @@ class ReportImageState extends State<ReportImage> {
             'Cookie': currentUser.cookie!
           },
           body: json.encode(jsonData));
-    
+
       if (context.mounted) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
           Navigator.pop(context);
@@ -328,17 +328,15 @@ class ReportImage extends StatefulWidget {
   final Product product;
 
   ProductImage? get productImage {
-    ProductImage? candidate = product.images
-        ?.firstWhere((image) => image.field == imageField);
+    ProductImage? candidate =
+        product.images?.firstWhere((image) => image.field == imageField);
 
-    if (candidate?.contributor == null) {
-      final ProductImage? replacement = product.images?.firstWhereOrNull(
-          (image) =>
-              image.imgid == candidate?.imgid && image.contributor != null);
-      if (replacement != null) {
-        candidate = replacement;
-      }
-    }
+    candidate = product.images?.firstWhere(
+      (image) => image.imgid == candidate?.imgid && image.contributor != null,
+      orElse: () {
+        return candidate!;
+      },
+    );
 
     return candidate;
   }
