@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
@@ -268,37 +271,57 @@ class ReportImageState extends State<ReportImage> {
         ),
         positiveButton: SmoothActionButton2(
           text: 'Submit',
-          onPressed: () {
-            const UriHelper nutriPatrolAPISubmitUriHelper =
-                UriHelper(host: 'nutripatrol.openfoodfacts.net');
-
-            final Uri nutriPatrolAPISubmitURI =
-                nutriPatrolAPISubmitUriHelper.getPostUri(path: 'api/v1/flags');
+          onPressed: () async {
+            final Uri nutriPatrolAPISubmitURI = Uri.https('nutripatrol.openfoodfacts.org', 'api/v1/flags');
 
             final User currentUser = ProductQuery.getWriteUser();
 
             if (reportReason == null ||
                 productImage?.url == null ||
-                productImage?.imgid == null) {
+                productImage?.imgid == null ||
+                currentUser.cookie == null ||
+                widget.product.barcode == null) {
               return;
             }
 
-            HttpHelper().doPostRequest(
-                nutriPatrolAPISubmitURI,
-                {
-                  'type': 'image',
-                  'url': productImage!.url!,
-                  'user_id': currentUser.userId,
-                  'source': 'mobile',
-                  'image_id': productImage.imgid!,
-                  'reason': reportReason!.name,
-                  'comment': reportExplanation,
-                },
-                currentUser,
-                uriHelper: nutriPatrolAPISubmitUriHelper,
-                addCredentialsToBody: false);
+            final jsonData = {
+              'type': 'image',
+              'url': productImage!.url!,
+              'user_id': currentUser.userId,
+              'source': 'mobile',
+              'image_id': productImage.imgid!,
+              'reason': reportReason!.name,
+              'comment': reportExplanation,
+              'flavor': 'off',
+              'barcode': widget.product.barcode,
+            };
 
-            Navigator.pop(context);
+            try {
+              final response = await http.post(nutriPatrolAPISubmitURI,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Cookie': currentUser.cookie!
+                  },
+                  body: json.encode(jsonData));
+
+              if (context.mounted) {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            'Server error: ${response.statusCode}: ${response.body}')),
+                  );
+                }
+              }
+            } catch (e) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
+            }
           },
         ),
       ),
