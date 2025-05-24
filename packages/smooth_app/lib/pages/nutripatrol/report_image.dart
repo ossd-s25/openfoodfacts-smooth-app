@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
+import 'package:smooth_app/generic_lib/bottom_sheets/smooth_bottom_sheet.dart';
 import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
@@ -271,12 +272,13 @@ class ReportImageState extends State<ReportImage> {
     final User currentUser = ProductQuery.getWriteUser();
 
     if (reportReason == null ||
-        widget.productImage?.url == null ||
         widget.productImage?.imgid == null ||
         currentUser.cookie == null ||
         widget.product.barcode == null) {
       return;
     }
+
+    widget.productImage?.getUrl(widget.product.barcode!);
 
     final jsonData = {
       'type': 'image',
@@ -301,6 +303,14 @@ class ReportImageState extends State<ReportImage> {
 
       if (context.mounted) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
+          await showSmoothModalSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return SmoothModalSheet(
+                    title: 'Report sent!',
+                    body: const Text('Your report has been sent!'));
+              });
+
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -337,6 +347,10 @@ class ReportImage extends StatefulWidget {
         return candidate!;
       },
     );
+
+    for (var image in product.images!) {
+      print(image);
+    }
 
     return candidate;
   }
