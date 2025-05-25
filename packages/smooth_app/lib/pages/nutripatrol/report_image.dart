@@ -11,9 +11,9 @@ import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
 import 'package:smooth_app/query/product_query.dart';
 import 'package:smooth_app/resources/app_icons.dart' as icons;
-import 'package:smooth_app/widgets/smooth_scaffold.dart';
 import 'package:smooth_app/widgets/v2/smooth_buttons_bar.dart';
 import 'package:smooth_app/widgets/v2/smooth_leading_button.dart';
+import 'package:smooth_app/widgets/v2/smooth_scaffold2.dart';
 import 'package:smooth_app/widgets/v2/smooth_topbar2.dart';
 
 // We have to have our own enums here, since Nutripatrol doesn't have externally obtainable reasons for reporting
@@ -72,15 +72,28 @@ class ReportImageState extends State<ReportImage> {
 
   @override
   Widget build(BuildContext context) {
-    return SmoothScaffold(
-      appBar: const SmoothTopBar2(
+    return SmoothScaffold2(
+      topBar: const SmoothTopBar2(
         title: 'Report an Image',
         leadingAction: SmoothLeadingAction.close,
+        reducedHeightOnScroll: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(MEDIUM_SPACE),
-        children: [
-          SmoothCardWithRoundedHeader(
+      padding: const EdgeInsets.all(MEDIUM_SPACE),
+      bottomBar: SmoothButtonsBar2(
+        negativeButton: SmoothActionButton2(
+          text: 'Cancel',
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        positiveButton: SmoothActionButton2(
+          text: 'Submit',
+          onPressed: submitAction,
+        ),
+      ),
+      children: [
+        SliverToBoxAdapter(
+          child: SmoothCardWithRoundedHeader(
             title: 'Image to report',
             leading: const icons.Flag(),
             child: Padding(
@@ -111,10 +124,14 @@ class ReportImageState extends State<ReportImage> {
               ),
             ),
           ),
-          const SizedBox(
+        ),
+        const SliverToBoxAdapter(
+          child: SizedBox(
             height: MEDIUM_SPACE,
           ),
-          SmoothCardWithRoundedHeader(
+        ),
+        SliverToBoxAdapter(
+          child: SmoothCardWithRoundedHeader(
             title: 'Reason',
             leading: const Text('1'),
             trailing: SmoothCardHeaderButton(
@@ -147,7 +164,8 @@ class ReportImageState extends State<ReportImage> {
                   return SizedBox(
                     width: double.infinity,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(MEDIUM_SPACE, 0, MEDIUM_SPACE, MEDIUM_SPACE),
+                      padding: const EdgeInsets.fromLTRB(
+                          MEDIUM_SPACE, 0, MEDIUM_SPACE, MEDIUM_SPACE),
                       child: Text(reportReason!.userText),
                     ),
                   );
@@ -155,13 +173,17 @@ class ReportImageState extends State<ReportImage> {
               },
             ),
           ),
-          const SizedBox(
+        ),
+        const SliverToBoxAdapter(
+          child: SizedBox(
             height: MEDIUM_SPACE,
           ),
-          if (reportReason == ReportReason.photoNotMatching ||
-              reportReason ==
-                  ReportReason.photoNotMatchingAndContinuingWithReport)
-            SmoothCardWithRoundedHeader(
+        ),
+        if (reportReason == ReportReason.photoNotMatching ||
+            reportReason ==
+                ReportReason.photoNotMatchingAndContinuingWithReport)
+          SliverToBoxAdapter(
+            child: SmoothCardWithRoundedHeader(
               title: 'Explanation',
               leading: const Text('2'),
               contentPadding: const EdgeInsets.all(MEDIUM_SPACE),
@@ -206,12 +228,16 @@ class ReportImageState extends State<ReportImage> {
                 },
               ),
             ),
-          const SizedBox(
+          ),
+        const SliverToBoxAdapter(
+          child: SizedBox(
             height: MEDIUM_SPACE,
           ),
-          if (reportReason != null &&
-              reportReason != ReportReason.photoNotMatching)
-            SmoothCardWithRoundedHeader(
+        ),
+        if (reportReason != null &&
+            reportReason != ReportReason.photoNotMatching)
+          SliverToBoxAdapter(
+            child: SmoothCardWithRoundedHeader(
               contentPadding: EdgeInsets.zero,
               title: 'Comment',
               leading: Text(reportReason ==
@@ -250,20 +276,8 @@ class ReportImageState extends State<ReportImage> {
                 },
               ),
             ),
-        ],
-      ),
-      bottomNavigationBar: SmoothButtonsBar2(
-        negativeButton: SmoothActionButton2(
-          text: 'Cancel',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        positiveButton: SmoothActionButton2(
-          text: 'Submit',
-          onPressed: submitAction,
-        ),
-      ),
+          ),
+      ],
     );
   }
 
