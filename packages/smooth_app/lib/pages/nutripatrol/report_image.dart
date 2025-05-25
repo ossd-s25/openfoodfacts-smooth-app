@@ -280,11 +280,9 @@ class ReportImageState extends State<ReportImage> {
       return;
     }
 
-    widget.productImage?.getUrl(widget.product.barcode!);
-
     final jsonData = {
       'type': 'image',
-      'url': widget.productImage?.url,
+      'url': widget.productImage?.getUrl(widget.product.barcode!),
       'user_id': currentUser.userId,
       'source': 'mobile',
       'image_id': widget.productImage?.imgid,
@@ -349,10 +347,6 @@ class ReportImage extends StatefulWidget {
         return candidate!;
       },
     );
-
-    for (var image in product.images!) {
-      print(image);
-    }
 
     return candidate;
   }
