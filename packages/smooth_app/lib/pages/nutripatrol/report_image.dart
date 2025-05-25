@@ -11,9 +11,10 @@ import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
 import 'package:smooth_app/query/product_query.dart';
 import 'package:smooth_app/resources/app_icons.dart' as icons;
-import 'package:smooth_app/widgets/smooth_app_bar.dart';
 import 'package:smooth_app/widgets/smooth_scaffold.dart';
 import 'package:smooth_app/widgets/v2/smooth_buttons_bar.dart';
+import 'package:smooth_app/widgets/v2/smooth_leading_button.dart';
+import 'package:smooth_app/widgets/v2/smooth_topbar2.dart';
 
 // We have to have our own enums here, since Nutripatrol doesn't have externally obtainable reasons for reporting
 enum ReportReason {
@@ -72,8 +73,9 @@ class ReportImageState extends State<ReportImage> {
   @override
   Widget build(BuildContext context) {
     return SmoothScaffold(
-      appBar: SmoothAppBar(
-        title: const Text('Report an Image'),
+      appBar: const SmoothTopBar2(
+        title: 'Report an Image',
+        leadingAction: SmoothLeadingAction.close,
       ),
       body: ListView(
         padding: const EdgeInsets.all(12),
