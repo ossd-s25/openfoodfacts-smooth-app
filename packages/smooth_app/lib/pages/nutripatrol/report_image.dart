@@ -78,15 +78,15 @@ class ReportImageState extends State<ReportImage> {
         leadingAction: SmoothLeadingAction.close,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(MEDIUM_SPACE),
         children: [
           SmoothCardWithRoundedHeader(
             title: 'Image to report',
             leading: const icons.Flag(),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(MEDIUM_SPACE),
               child: Row(
-                spacing: 12.0,
+                spacing: MEDIUM_SPACE,
                 children: [
                   ProductPicture.fromProduct(
                     imageField: widget.imageField,
@@ -112,7 +112,7 @@ class ReportImageState extends State<ReportImage> {
             ),
           ),
           const SizedBox(
-            height: 12,
+            height: MEDIUM_SPACE,
           ),
           SmoothCardWithRoundedHeader(
             title: 'Reason',
@@ -147,7 +147,7 @@ class ReportImageState extends State<ReportImage> {
                   return SizedBox(
                     width: double.infinity,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      padding: const EdgeInsets.fromLTRB(MEDIUM_SPACE, 0, MEDIUM_SPACE, MEDIUM_SPACE),
                       child: Text(reportReason!.userText),
                     ),
                   );
@@ -156,7 +156,7 @@ class ReportImageState extends State<ReportImage> {
             ),
           ),
           const SizedBox(
-            height: 12,
+            height: MEDIUM_SPACE,
           ),
           if (reportReason == ReportReason.photoNotMatching ||
               reportReason ==
@@ -164,7 +164,7 @@ class ReportImageState extends State<ReportImage> {
             SmoothCardWithRoundedHeader(
               title: 'Explanation',
               leading: const Text('2'),
-              contentPadding: const EdgeInsets.all(12),
+              contentPadding: const EdgeInsets.all(MEDIUM_SPACE),
               trailing: SmoothCardHeaderButton(
                   tooltip: 'Expand',
                   child: const icons.Edit(),
@@ -207,7 +207,7 @@ class ReportImageState extends State<ReportImage> {
               ),
             ),
           const SizedBox(
-            height: 12,
+            height: MEDIUM_SPACE,
           ),
           if (reportReason != null &&
               reportReason != ReportReason.photoNotMatching)
