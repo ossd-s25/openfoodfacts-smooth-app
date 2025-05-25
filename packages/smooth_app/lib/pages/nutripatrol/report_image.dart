@@ -304,12 +304,22 @@ class ReportImageState extends State<ReportImage> {
       if (context.mounted) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
           await showSmoothModalSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return SmoothModalSheet(
-                    title: 'Report sent!',
-                    body: const Text('Your report has been sent!'));
-              });
+            context: context,
+            builder: (BuildContext context) {
+              return SmoothModalSheet(
+                title: 'Report sent!',
+                body: const Column(
+                  spacing: MEDIUM_SPACE,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(child: icons.Check()),
+                    Text('Thank you for your report!'),
+                    Text('This report will soon be reviewed by our moderators.')
+                  ],
+                ),
+              );
+            },
+          );
 
           Navigator.pop(context);
         } else {
