@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:smooth_app/cards/product_cards/smooth_product_image.dart';
 import 'package:smooth_app/generic_lib/bottom_sheets/smooth_bottom_sheet.dart';
-import 'package:smooth_app/generic_lib/buttons/smooth_button_with_arrow.dart';
 import 'package:smooth_app/generic_lib/design_constants.dart';
 import 'package:smooth_app/generic_lib/widgets/smooth_card.dart';
 import 'package:smooth_app/query/product_query.dart';
@@ -133,7 +132,10 @@ class ReportImageState extends State<ReportImage> {
         SliverToBoxAdapter(
           child: SmoothCardWithRoundedHeader(
             title: 'Reason',
-            leading: const Text('1'),
+            leading: const Text(
+              '1',
+              style: TextStyle(color: Colors.black),
+            ),
             trailing: SmoothCardHeaderButton(
                 tooltip: 'Expand',
                 child: const icons.Edit(),
@@ -196,7 +198,10 @@ class ReportImageState extends State<ReportImage> {
           SliverToBoxAdapter(
             child: SmoothCardWithRoundedHeader(
               title: 'Explanation',
-              leading: const Text('2'),
+              leading: const Text(
+                '2',
+                style: TextStyle(color: Colors.black),
+              ),
               trailing: SmoothCardHeaderButton(
                   tooltip: 'Expand',
                   child: const icons.Edit(),
@@ -267,10 +272,13 @@ class ReportImageState extends State<ReportImage> {
             child: SmoothCardWithRoundedHeader(
               contentPadding: EdgeInsets.zero,
               title: 'Comment',
-              leading: Text(reportReason ==
-                      ReportReason.photoNotMatchingAndContinuingWithReport
-                  ? '3'
-                  : '2'),
+              leading: Text(
+                reportReason ==
+                        ReportReason.photoNotMatchingAndContinuingWithReport
+                    ? '3'
+                    : '2',
+                style: TextStyle(color: Colors.black),
+              ),
               child: TextFormField(
                 initialValue: reportExplanation,
                 minLines: null,
