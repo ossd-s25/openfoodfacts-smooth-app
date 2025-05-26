@@ -96,7 +96,7 @@ class ReportImageState extends State<ReportImage> {
             title: 'Image to report',
             leading: const icons.Flag(),
             child: Padding(
-              padding: const EdgeInsets.all(MEDIUM_SPACE),
+              padding: const EdgeInsets.fromLTRB(MEDIUM_SPACE, 0, MEDIUM_SPACE, MEDIUM_SPACE),
               child: Row(
                 spacing: MEDIUM_SPACE,
                 children: [
