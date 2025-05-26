@@ -238,7 +238,9 @@ class ReportImageState extends State<ReportImage> {
                         ),
                         ListTile(
                           title: const Text('Take a picture of the product'),
-                          onTap: () => {print('To be implemented...')},
+                          onTap: () => {
+                            Navigator.pop(context)
+                          },
                           trailing: const icons.Chevron.right(
                               size: DEFAULT_ICON_SIZE / 2),
                         ),
