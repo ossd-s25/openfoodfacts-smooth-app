@@ -151,13 +151,24 @@ class ReportImageState extends State<ReportImage> {
                         if (reason !=
                             ReportReason
                                 .photoNotMatchingAndContinuingWithReport)
-                          SmoothButtonWithArrow(
-                              text: reason.userText,
-                              onTap: () => {
+                          Builder(builder: (BuildContext context) {
+                            return Column(
+                              children: [
+                                ListTile(
+                                  title: Text(reason.userText),
+                                  onTap: () => {
                                     setState(() {
                                       reportReason = reason;
                                     })
-                                  }),
+                                  },
+                                  trailing: const icons.Chevron.right(
+                                      size: DEFAULT_ICON_SIZE / 2),
+                                ),
+                                if (reason != ReportReason.values.last)
+                                  const Divider(),
+                              ],
+                            );
+                          })
                     ],
                   );
                 } else {
@@ -186,7 +197,6 @@ class ReportImageState extends State<ReportImage> {
             child: SmoothCardWithRoundedHeader(
               title: 'Explanation',
               leading: const Text('2'),
-              contentPadding: const EdgeInsets.all(MEDIUM_SPACE),
               trailing: SmoothCardHeaderButton(
                   tooltip: 'Expand',
                   child: const icons.Edit(),
@@ -201,27 +211,44 @@ class ReportImageState extends State<ReportImage> {
                       ReportReason.photoNotMatchingAndContinuingWithReport) {
                     return const SizedBox(
                       width: double.infinity,
-                      child: Text('Continue making a report'),
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              MEDIUM_SPACE, 0, MEDIUM_SPACE, MEDIUM_SPACE),
+                          child: Text('Continue making a report')),
                     );
                   } else {
                     return Column(
                       children: <Widget>[
-                        const Text(
-                            'Open Food Facts is a user maintained database with over 3 million products (according to Wikipedia).'),
-                        const Text(
-                            'If you own this product, you can take a photo of it to correct the product details.'),
-                        SmoothButtonWithArrow(
-                            text: 'Take a picture of the product',
-                            onTap: () => {print('To be implemented...')}),
-                        SmoothButtonWithArrow(
-                          text: 'Continue making a report',
+                        const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: MEDIUM_SPACE),
+                          child: Column(
+                            children: [
+                              Text(
+                                  'Open Food Facts is a user maintained database with over 3 million products (according to Wikipedia).'),
+                              Text(
+                                  'If you own this product, you can take a photo of it to correct the product details.'),
+                            ],
+                          ),
+                        ),
+                        ListTile(
+                          title: const Text('Take a picture of the product'),
+                          onTap: () => {print('To be implemented...')},
+                          trailing: const icons.Chevron.right(
+                              size: DEFAULT_ICON_SIZE / 2),
+                        ),
+                        const Divider(),
+                        ListTile(
+                          title: const Text('Continue making a report'),
                           onTap: () => {
                             setState(() {
                               reportReason = ReportReason
                                   .photoNotMatchingAndContinuingWithReport;
                             })
                           },
-                        ),
+                          trailing: const icons.Chevron.right(
+                              size: DEFAULT_ICON_SIZE / 2),
+                        )
                       ],
                     );
                   }
